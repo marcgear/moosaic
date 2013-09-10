@@ -1,0 +1,9 @@
+{
+    "require": {
+        "monolog/monolog": "1.6.*",
+        "symfony/class-loader": "2.4.*@dev",
+        "guzzle/guzzle": "3.7.*@dev",
+        "doctrine/cache": "1.0.*",
+        "moodev/moophp": "dev-master"
+    }
+}
