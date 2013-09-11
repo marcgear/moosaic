@@ -16,4 +16,14 @@ class CMYK implements Colour
         $this->k = $k;
     }
 
+    public function getValues()
+    {
+        return array(
+            'c' => $this->c,
+            'm' => $this->m,
+            'y' => $this->y,
+            'k' => $this->k,
+        );
+    }
+
 }

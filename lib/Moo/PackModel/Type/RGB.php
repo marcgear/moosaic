@@ -14,4 +14,13 @@ class RGB implements Colour
         $this->b = $b;
     }
 
+    public function getValues()
+    {
+        return array(
+            'r' => $this->r,
+            'g' => $this->g,
+            'b' => $this->b,
+        );
+    }
+
 }

@@ -7,6 +7,11 @@ abstract class Data
 
     abstract function getType();
 
+    public function __construct($linkId)
+    {
+        $this->linkId = $linkId;
+    }
+
     public function getLinkId()
     {
         return $this->linkId;

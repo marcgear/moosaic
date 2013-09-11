@@ -29,7 +29,9 @@ class Pack
     public function __construct()
     {
         $this->imageBasket = new ImageBasket();
-        $this->sides = new \SplObjectStorage();
+        $this->sides       = new \SplObjectStorage();
+        $this->cards       = new \SplObjectStorage();
+        $this->extras      = new \SplObjectStorage();
     }
 
     public function getNumCards()
@@ -53,12 +55,20 @@ class Pack
 
     public function getCards()
     {
-        return $this->cards;
+        $cards = array();
+        foreach ($this->cards as $card) {
+            $cards[] = $card;
+        }
+        return $cards;
     }
 
     public function getExtras()
     {
-        return $this->extras;
+        $extras = array();
+        foreach ($this->extras as $extras) {
+            $extra[] = $extras;
+        }
+        return $extras;
     }
 
     public function getImageBasket()
@@ -88,7 +98,36 @@ class Pack
 
     public function removeSide(Side $side)
     {
-        // remove the sides
         $this->sides->detach($side);
+    }
+
+    public function addCard(Card $card)
+    {
+        $this->cards->attach($card);
+    }
+
+    public function hasCard(Card $card)
+    {
+        return $this->cards->contains($card);
+    }
+
+    public function removeCard(Card $card)
+    {
+        $this->cards->detach($card);
+    }
+
+    public function addExtra(Extra $extra)
+    {
+        $this->extras->attach($extra);
+    }
+
+    public function hasExtra(Extra $extra)
+    {
+        return $this->extras->contains($extra);
+    }
+
+    public function removeExtra(Extra $extra)
+    {
+        $this->extras->detach($extra);
     }
 }

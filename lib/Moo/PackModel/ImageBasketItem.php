@@ -13,4 +13,12 @@ class ImageBasketItem
      */
     protected $imageItems = array();
 
+    public function __construct($resourceUri, $name, $source, $cacheId)
+    {
+        $this->resourceUri = $resourceUri;
+        $this->name        = $name;
+        $this->source      = $source;
+        $this->cacheId     = $cacheId;
+    }
+
 }
