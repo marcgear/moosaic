@@ -1,0 +1,42 @@
+{
+    "name": "MOO Pack API",
+    "apiVersion": "1",
+    "baseUrl": "http://www.moo.com/api/service/",
+    "description": "MOO Pack API",
+    "operations": {
+        "getPack":{
+            "httpMethod":"GET",
+            "responseClass":"Pack",
+            "parameters":{
+                "method":"moo.pack.getPack",
+                "packId": {
+                    "description":"packId to fetch",
+                    "type":"string",
+                    "location":"query"
+                },
+                "includePhysicalSpec": {
+                    "description":"include physicalSpec in response",
+                    "type":"boolean",
+                    "location":"query"
+                }
+            }
+        },
+        "createPack":{},
+        "getPhysicalSpec":{},
+        "updatePack":{},
+        "updatePhysicalSpec":{},
+        "addToCart":{},
+        "getTemplate":{},
+        "uploadImage":{},
+        "importImage":{},
+        "measureText":{}
+    },
+    "models": {
+        "Pack": {
+            "type":"object",
+            "additionalProperties": {
+                "location":"json"
+            }
+        }
+    }
+}

@@ -1,8 +1,8 @@
 <?php
 require_once 'vendor/autoload.php';
 use Symfony\Component\ClassLoader\UniversalClassLoader;
-use Guzzle\Http\Client;
-
+use Guzzle\Http\Client as GuzzleClient;
+use Moo\Client\Client as MooClient;
 // classloader
 $loader = new UniversalClassLoader();
 $loader->registerNamespace('Moosaic', __DIR__.'/lib/');
@@ -21,6 +21,13 @@ function createClient()
             )
         )
     );
-    $client = new Client('http://labs.tineye.com', $options);
+    $client = new GuzzleClient('http://labs.tineye.com', $options);
     return $client;
 }
+
+$mooClient = MooClient::factory(array(
+    'consumer_key'    => '',
+    'consumer_secret' => '',
+    'token'           => '',
+    'token_secret'    => '',
+));
