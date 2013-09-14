@@ -6,6 +6,7 @@ use Moo\Client\Client as MooClient;
 // classloader
 $loader = new UniversalClassLoader();
 $loader->registerNamespace('Moosaic', __DIR__.'/lib/');
+$loader->registerNamespace('Moo', __DIR__.'/lib/');
 $loader->register();
 
 // dumping ground for crap that needs to go elsewhere
@@ -26,8 +27,11 @@ function createClient()
 }
 
 $mooClient = MooClient::factory(array(
-    'consumer_key'    => '',
-    'consumer_secret' => '',
-    'token'           => '',
-    'token_secret'    => '',
+    'consumer_key'    => 'c3b12ce68314c0ee55bf6928d20eadb104d1d07da',
+    'consumer_secret' => '91b4bc021958f6bc77eaccadab7878c3',
 ));
+echo 'DEBUG ON LINE ',__LINE__, ' in ', __FILE__, "\n<pre>\n";
+print_r($mooClient->createPack(array('packId' => 1)));
+echo "\n</pre>\n";
+
+exit;

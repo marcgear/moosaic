@@ -8,10 +8,17 @@
             "httpMethod":"GET",
             "responseClass":"Pack",
             "parameters":{
-                "method":"moo.pack.getPack",
+                "method":{
+                    "type":"string",
+                    "default":"moo.pack.getPack",
+                    "static":true,
+                    "required":true,
+                    "location":"query"
+                },
                 "packId": {
                     "description":"packId to fetch",
                     "type":"string",
+                    "required":true,
                     "location":"query"
                 },
                 "includePhysicalSpec": {
@@ -21,7 +28,25 @@
                 }
             }
         },
-        "createPack":{},
+        "createPack":{
+            "httpMethod":"POST",
+            "responseClass":"Pack",
+            "parameters":{
+                "method":{
+                    "type":"string",
+                    "default":"moo.pack.createPack",
+                    "static":true,
+                    "required":true,
+                    "location":"query"
+                },
+                "product":{
+                    "type":"string",
+                    "default":"businesscard",
+                    "required":true,
+                    "location":"query"
+                }
+            }
+        },
         "getPhysicalSpec":{},
         "updatePack":{},
         "updatePhysicalSpec":{},

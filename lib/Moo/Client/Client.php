@@ -17,8 +17,6 @@ class Client extends GuzzleClient
             'base_url',
             'consumer_key',
             'consumer_secret',
-            'token',
-            'token_secret',
         );
         // merge in the defaults and validate the config
         $config = Collection::fromConfig($config, $default, $required);
@@ -30,7 +28,7 @@ class Client extends GuzzleClient
         $client->addSubscriber(new OauthPlugin($config->toArray()));
 
         // Set the service description
-        $client->setDescription(ServiceDescription::factory('moo.json'));
+        $client->setDescription(ServiceDescription::factory(__DIR__.'/moo.json'));
 
         return $client;
     }
