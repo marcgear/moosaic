@@ -30,7 +30,7 @@
         },
         "createPack":{
             "httpMethod":"POST",
-            "responseClass":"Pack",
+            "responseClass":"\\Moo\\Client\\CreatePackOutput",
             "parameters":{
                 "method":{
                     "type":"string",
@@ -57,6 +57,32 @@
         "measureText":{}
     },
     "models": {
+        "CreatePackOutput": {
+            "type":"object",
+            "properties": {
+                "packId": {
+                    "location":"json",
+                    "type":"string"
+                },
+                "dropins": {
+                    "location":"json",
+                    "type":"array",
+                    "items":{
+                        "type":"string"
+                    }
+                },
+                "pack": {
+                    "location":"json",
+                    "type":"object",
+                    "filters":[
+                        {
+                            "method":"\\Moo\\Client\\Client::parsePack",
+                            "args": [ "@value" ]
+                        }
+                    ]
+                }
+            }
+        },
         "Pack": {
             "type":"object",
             "additionalProperties": {

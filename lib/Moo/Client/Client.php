@@ -32,4 +32,9 @@ class Client extends GuzzleClient
 
         return $client;
     }
+
+    public static function parsePack($data)
+    {
+        return $data;
+    }
 }

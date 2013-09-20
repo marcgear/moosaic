@@ -4,6 +4,11 @@ namespace Moo\PackModel;
 class Card
 {
     /**
+     * @var Int
+     */
+    protected $id;
+
+    /**
      * @var Side
      */
     protected $imageSide;
@@ -13,10 +18,16 @@ class Card
      */
     protected $detailsSide;
 
-    public function __construct(Side $image, Side $details = null)
+    public function __construct($id, Side $image, Side $details = null)
     {
+        $this->id          = $id;
         $this->imageSide   = $image;
         $this->detailsSide = $details;
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function getImageSide()

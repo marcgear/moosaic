@@ -30,8 +30,6 @@ $mooClient = MooClient::factory(array(
     'consumer_key'    => 'c3b12ce68314c0ee55bf6928d20eadb104d1d07da',
     'consumer_secret' => '91b4bc021958f6bc77eaccadab7878c3',
 ));
-echo 'DEBUG ON LINE ',__LINE__, ' in ', __FILE__, "\n<pre>\n";
-print_r($mooClient->createPack(array('packId' => 1)));
-echo "\n</pre>\n";
 
+$response = $mooClient->createPack(array('packId' => 1));
 exit;

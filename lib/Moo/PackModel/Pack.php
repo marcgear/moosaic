@@ -3,6 +3,7 @@ namespace Moo\PackModel;
 
 class Pack
 {
+    protected $id;
     protected $numCards;
     protected $productCode;
 
@@ -26,12 +27,18 @@ class Pack
      */
     protected $imageBasket;
 
-    public function __construct()
+    public function __construct($id = null)
     {
+        $this->id          = $id;
         $this->imageBasket = new ImageBasket();
         $this->sides       = new \SplObjectStorage();
         $this->cards       = new \SplObjectStorage();
         $this->extras      = new \SplObjectStorage();
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function getNumCards()
@@ -48,7 +55,7 @@ class Pack
     {
         $sides = array();
         foreach ($this->sides as $side) {
-            $sides[] = $side;
+            $sides[$side->getType().'-'.$side->getNum()] = $side;
         }
         return $sides;
     }
@@ -104,6 +111,12 @@ class Pack
     public function addCard(Card $card)
     {
         $this->cards->attach($card);
+        if (!$this->hasSide($card->getImageSide())) {
+            $this->addSide($card->getImageSide());
+        }
+        if (!$this->hasSide($card->getDetailsSide())) {
+            $this->addSide($card->getDetailsSide());
+        }
     }
 
     public function hasCard(Card $card)

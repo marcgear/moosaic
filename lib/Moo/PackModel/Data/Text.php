@@ -29,6 +29,8 @@ class Text extends Data
      */
     protected $alignment;
 
+    const TYPE = 'textData';
+
     public function __construct($linkId, $text, Font $font, Colour $colour, $pointSize, $alignment)
     {
         parent::__construct($linkId);
@@ -41,7 +43,7 @@ class Text extends Data
 
     public function getType()
     {
-        return 'textData';
+        return self::TYPE;
     }
 
     public function getText()

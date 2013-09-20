@@ -25,6 +25,8 @@ class Image extends Data
      */
     protected $enhance;
 
+    const TYPE = 'imageData';
+
     public function __construct($linkId, BoundingBox $box, $resourceUri, $imageStoreFileId, $enhance)
     {
         parent::__construct($linkId);
@@ -36,7 +38,7 @@ class Image extends Data
 
     public function getType()
     {
-        return 'imageData';
+        return self::TYPE;
     }
 
     public function getImageBox()

@@ -1,6 +1,8 @@
 <?php
 namespace Moo\PackModel;
 
+use Moo\PackModel\Data\Data;
+
 class Side
 {
     protected $type;
@@ -11,6 +13,10 @@ class Side
      * @var \SplObjectStorage
      */
     protected $data;
+
+    const TYPE_IMAGE   = 'image';
+    const TYPE_DETAILS = 'details';
+
 
     public function __construct($type, $sideNum, $templateCode)
     {

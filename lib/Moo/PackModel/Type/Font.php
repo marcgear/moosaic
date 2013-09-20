@@ -1,5 +1,5 @@
 <?php
-namespace Moo\PackModel\Data;
+namespace Moo\PackModel\Type;
 
 class Font
 {

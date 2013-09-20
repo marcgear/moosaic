@@ -10,6 +10,8 @@ class Box extends Data
      */
     protected $colour;
 
+    const TYPE = 'boxData';
+
     public function __construct($linkId, Colour $colour)
     {
         parent::__construct($linkId);
@@ -18,7 +20,7 @@ class Box extends Data
 
     public function getType()
     {
-        return 'boxData';
+        return self::TYPE;
     }
 
     public function getColour()
