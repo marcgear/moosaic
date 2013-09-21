@@ -20,64 +20,62 @@ class DataSerializer
         $this->typeSerializer = $typeSerializer;
     }
 
-    public function serializeData(Data $data)
+    public function normalizeData(Data $data)
     {
         $str = null;
         switch ($data->getType()) {
             case Text::TYPE:
             case MultiLineText::TYPE:
-                $str = $this->serializeText($data);
+                $str = $this->normalizeText($data);
                 break;
             case Image::TYPE:
-                $str = $this->serializeImage($data);
+                $str = $this->normalizeImage($data);
                 break;
             case Box::TYPE:
-                $str = $this->serializeBox($data);
+                $str = $this->normalizeBox($data);
         }
         return $str;
     }
 
-    public function deserializeData($data)
+    public function denormalizeData($data)
     {
         $obj = null;
         switch ($data['type']) {
             case Text::TYPE:
-                $obj = $this->deserializeText($data);
+                $obj = $this->denormalizeText($data);
                 break;
             case MultiLineText::TYPE:
-                $obj = $this->deserializeMultiLineText($data);
+                $obj = $this->denormalizeMultiLineText($data);
                 break;
             case Image::TYPE:
-                $obj = $this->deserializeImage($data);
+                $obj = $this->denormalizeImage($data);
                 break;
             case Box::TYPE:
-                $obj = $this->deserializeImage($data);
+                $obj = $this->denormalizeImage($data);
                 break;
         }
         return $obj;
     }
 
-    public function serializeText(Text $text)
+    public function normalizeText(Text $text)
     {
-        return json_encode(
-            array(
-                 'linkId'    => $text->getLinkId(),
-                 'type'      => $text->getType(),
-                 'font'      => $this->typeSerializer->serializeFont($text->getFont()),
-                 'colour'    => $this->typeSerializer->serializeColour($text->getColour()),
-                 'pointSize' => $text->getPointSize(),
-                 'alignment' => $text->getAlignment(),
-            )
+        return array(
+             'linkId'    => $text->getLinkId(),
+             'type'      => $text->getType(),
+             'font'      => $this->typeSerializer->normalizeFont($text->getFont()),
+             'colour'    => $this->typeSerializer->normalizeColour($text->getColour()),
+             'pointSize' => $text->getPointSize(),
+             'alignment' => $text->getAlignment(),
         );
     }
 
-    public function deserializeText($data)
+    public function denormalizeText($data)
     {
         $text = new Text(
             $data['linkId'],
             $data['text'],
-            $this->typeSerializer->deserializeFont($data['font']),
-            $this->typeSerializer->deserializeColour($data['colour']),
+            $this->typeSerializer->denormalizeFont($data['font']),
+            $this->typeSerializer->denormalizeColour($data['colour']),
             $data['pointSize'],
             $data['alignment']
         );
@@ -86,41 +84,39 @@ class DataSerializer
 
     public function serializeMultiLineText(MultiLineText $text)
     {
-        return $this->serializeText($text);
+        return $this->normalizeText($text);
     }
 
-    public function deserializeMultiLineText($data)
+    public function denormalizeMultiLineText($data)
     {
         $text = new MultiLineText(
             $data['linkId'],
             $data['text'],
-            $this->typeSerializer->deserializeFont($data['font']),
-            $this->typeSerializer->deserializeColour($data['colour']),
+            $this->typeSerializer->denormalizeFont($data['font']),
+            $this->typeSerializer->denormalizeColour($data['colour']),
             $data['pointSize'],
             $data['alignment']
         );
         return $text;
     }
 
-    public function serializeImage(Image $image)
+    public function normalizeImage(Image $image)
     {
-        return json_encode(
-            array(
-                 'linkId'           => $image->getLinkId(),
-                 'type'             => $image->getType(),
-                 'imageBox'         => $this->typeSerializer->serializeBox($image->getImageBox()),
-                 'resourceUri'      => $image->getResourceUri(),
-                 'imageStoreFileId' => $image->getImageStoreFileId(),
-                 'enhance'          => $image->getEnhance(),
-            )
+        return array(
+             'linkId'           => $image->getLinkId(),
+             'type'             => $image->getType(),
+             'imageBox'         => $this->typeSerializer->normalizeBox($image->getImageBox()),
+             'resourceUri'      => $image->getResourceUri(),
+             'imageStoreFileId' => $image->getImageStoreFileId(),
+             'enhance'          => $image->getEnhance(),
         );
     }
 
-    public function deserializeImage($data)
+    public function denormalizeImage($data)
     {
         $image = new Image(
             $data['linkId'],
-            $this->typeSerializer->deserializeBox($data['imageBox']),
+            $this->typeSerializer->denormalizeBox($data['imageBox']),
             $data['resourceUri'],
             $data['imageStoreFileId'],
             $data['enhance']
@@ -128,22 +124,20 @@ class DataSerializer
         return $image;
     }
 
-    public function serializeBox(Box $box)
+    public function normalizeBox(Box $box)
     {
-        return json_encode(
-            array(
-                'linkId' => $box->getLinkId(),
-                'type'   => $box->getType(),
-                'colour' => $this->typeSerializer->deserializeColour($box->getColour()),
-            )
+        return array(
+            'linkId' => $box->getLinkId(),
+            'type'   => $box->getType(),
+            'colour' => $this->typeSerializer->denormalizeColour($box->getColour()),
         );
     }
 
-    public function deserializeBox($data)
+    public function denormalizeBox($data)
     {
         return new Box(
             $data['linkId'],
-            $this->typeSerializer->deserializeColour($data['colour'])
+            $this->typeSerializer->denormalizeColour($data['colour'])
         );
     }
 }

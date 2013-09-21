@@ -30,6 +30,27 @@ $mooClient = MooClient::factory(array(
     'consumer_key'    => 'c3b12ce68314c0ee55bf6928d20eadb104d1d07da',
     'consumer_secret' => '91b4bc021958f6bc77eaccadab7878c3',
 ));
+$mooClient->addSubscriber(\Guzzle\Plugin\Log\LogPlugin::getDebugPlugin());
+?><pre>
+<?php
+$output = $mooClient->createPack();
+$spec = $output->getPhysicalSpec();
+$packId = $output->getPack()->getId();
 
-$response = $mooClient->createPack(array('packId' => 1));
+$spec = new \Moo\PackModel\PhysicalSpec(
+    $spec->getProductType(),
+    'quadplex_red',
+    $spec->getFinishingOption(),
+    $spec->getPackSize(),
+    'nolam'
+);
+
+$output = $mooClient->updatePhysicalSpec(
+    array(
+         'packId'       => $packId, 
+         'physicalSpec' => $spec,
+    )
+);
+
+?></pre><?php
 exit;

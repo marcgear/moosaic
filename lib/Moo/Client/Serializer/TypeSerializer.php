@@ -10,20 +10,18 @@ class TypeSerializer
 {
     public function serializeFont(Font $font)
     {
-        return json_encode(
-            array(
-                'family' => $font->getFamily(),
-                'bold'   => $font->getBold(),
-                'italic' => $font->getItalic(),
-            )
+        return array(
+            'family' => $font->getFamily(),
+            'bold'   => $font->getBold(),
+            'italic' => $font->getItalic(),
         );
     }
-    public function deserializeFont($data)
+    public function denormalizeFont($data)
     {
         return new Font($data['family'], $data['bold'], $data['italic']);
     }
 
-    public function serializeColour(Colour $colour)
+    public function normalizeColour(Colour $colour)
     {
         $data = array_merge(
             $colour->getValues(),
@@ -32,7 +30,7 @@ class TypeSerializer
         return json_encode($data);
     }
 
-    public function deserializeColour($data)
+    public function denormalizeColour($data)
     {
         $colour = null;
         switch ($data['type']) {
@@ -46,20 +44,18 @@ class TypeSerializer
         return $colour;
     }
 
-    public function serializeBox(Box $box)
+    public function normalizeBox(Box $box)
     {
-        return json_encode(
-            array(
-                 'x'      => $box->getX(),
-                 'y'      => $box->getY(),
-                 'width'  => $box->getWidth(),
-                 'height' => $box->getHeight(),
-                 'angle'  => $box->getAngle(),
-            )
+        return array(
+             'x'      => $box->getX(),
+             'y'      => $box->getY(),
+             'width'  => $box->getWidth(),
+             'height' => $box->getHeight(),
+             'angle'  => $box->getAngle(),
         );
     }
 
-    public function deserializeBox($data)
+    public function denormalizeBox($data)
     {
         return new Box($data['x'], $data['y'], $data['width'], $data['height'], $data['angle']);
     }

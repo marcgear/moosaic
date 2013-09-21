@@ -6,7 +6,7 @@
     "operations": {
         "getPack":{
             "httpMethod":"GET",
-            "responseClass":"Pack",
+            "responseClass":"\\Moo\\Client\\PackMethodOutput",
             "parameters":{
                 "method":{
                     "type":"string",
@@ -23,14 +23,67 @@
                 },
                 "includePhysicalSpec": {
                     "description":"include physicalSpec in response",
-                    "type":"boolean",
+                    "type":"string",
+                    "default":"true",
+                    "static":true,
                     "location":"query"
+                }
+            }
+        },
+        "getPhysicalSpec":{
+            "httpMethod":"GET",
+            "responseClass":"\\Moo\\Client\\PhysicalSpecOutput",
+            "parameters":{
+                "method":{
+                    "type":"string",
+                    "default":"moo.pack.getPhysicalSpec",
+                    "static":true,
+                    "required":true,
+                    "location":"query"
+                },
+                "packId": {
+                    "description":"packId to fetch",
+                    "type":"string",
+                    "required":true,
+                    "location":"query"
+                }
+            }
+        },
+        "updatePhysicalSpec":{
+            "httpMethod":"POST",
+            "responseClass":"\\Moo\\Client\\PhysicalSpecOutput",
+            "parameters":{
+                "method":{
+                    "type":"string",
+                    "default":"moo.pack.updatePhysicalSpec",
+                    "static":true,
+                    "required":true,
+                    "location":"query"
+                },
+                "packId": {
+                    "description":"packId to fetch",
+                    "type":"string",
+                    "required":true,
+                    "location":"query"
+                },
+                "physicalSpec": {
+                    "description":"physical spec to update to",
+                    "type":"object",
+                    "required":"true",
+                    "instanceOf":"\\Moo\\PackModel\\PhysicalSpec",
+                    "location":"query",
+                    "filters":[
+                        {
+                            "method":"\\Moo\\Client\\Serializer\\PackModelSerializer::serializePhysicalSpec",
+                            "args": ["@value"]
+                        }
+                    ]
                 }
             }
         },
         "createPack":{
             "httpMethod":"POST",
-            "responseClass":"\\Moo\\Client\\CreatePackOutput",
+            "responseClass":"\\Moo\\Client\\PackMethodOutput",
             "parameters":{
                 "method":{
                     "type":"string",
@@ -44,50 +97,21 @@
                     "default":"businesscard",
                     "required":true,
                     "location":"query"
+                },
+                "includePhysicalSpec": {
+                    "description":"include physicalSpec in response",
+                    "type":"string",
+                    "default":"true",
+                    "static":true,
+                    "location":"query"
                 }
             }
         },
-        "getPhysicalSpec":{},
         "updatePack":{},
-        "updatePhysicalSpec":{},
         "addToCart":{},
         "getTemplate":{},
         "uploadImage":{},
         "importImage":{},
         "measureText":{}
-    },
-    "models": {
-        "CreatePackOutput": {
-            "type":"object",
-            "properties": {
-                "packId": {
-                    "location":"json",
-                    "type":"string"
-                },
-                "dropins": {
-                    "location":"json",
-                    "type":"array",
-                    "items":{
-                        "type":"string"
-                    }
-                },
-                "pack": {
-                    "location":"json",
-                    "type":"object",
-                    "filters":[
-                        {
-                            "method":"\\Moo\\Client\\Client::parsePack",
-                            "args": [ "@value" ]
-                        }
-                    ]
-                }
-            }
-        },
-        "Pack": {
-            "type":"object",
-            "additionalProperties": {
-                "location":"json"
-            }
-        }
     }
 }

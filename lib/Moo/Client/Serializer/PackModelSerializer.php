@@ -1,13 +1,15 @@
 <?php
 namespace Moo\Client\Serializer;
 
+use JMS\Serializer\Annotation\Type;
+use Moo\PackModel\Pack;
+use Moo\PackModel\PhysicalSpec;
+use Moo\PackModel\Side;
 use Moo\PackModel\Card;
 use Moo\PackModel\Extra;
 use Moo\PackModel\ImageBasket;
 use Moo\PackModel\ImageBasketItem;
 use Moo\PackModel\ImageBasketItemImage;
-use Moo\PackModel\Pack;
-use Moo\PackModel\Side;
 
 class PackModelSerializer
 {
@@ -18,17 +20,22 @@ class PackModelSerializer
         $this->dataSerializer = $dataSerializer;
     }
 
-    public function serializePack(Pack $pack)
+    public function normalizePack(Pack $pack)
     {
         $sides  = array();
         $extras = array();
+        $cards = array();
 
         foreach ($pack->getSides() as $side) {
-            $sides[] = $this->serializeSide($side);
+            $sides[] = $this->normalizeSide($side);
         }
 
         foreach ($pack->getExtras() as $extra) {
-            $extras[] = $this->serializeExtra($extra);
+            $extras[] = $this->normalizeExtra($extra);
+        }
+
+        foreach($pack->getCards() as $card) {
+            $cards[] = $this->normalizeCard($card);
         }
 
         return json_encode(
@@ -37,49 +44,47 @@ class PackModelSerializer
                  'numCards'    => $pack->getNumCards(),
                  'sides'       => $sides,
                  'extras'      => $extras,
-                 'imageBasket' => $this->serializeImageBasket($pack->getImageBasket()),
+                 'imageBasket' => $this->normalizeImageBasket($pack->getImageBasket()),
             )
         );
     }
 
-    public function deserializePack($id, $packData)
+    public function denormalizePack($id, $packData)
     {
         $pack = new Pack($id);
         $pack->setProductCode($packData['productCode']);
         $pack->setNumCards($packData['numCards']);
         foreach ($packData['sides'] as $sideData) {
-            $pack->addSide($this->deserializeSide($sideData));
+            $pack->addSide($this->denormalizeSide($sideData));
         }
         foreach ($packData['cards'] as $cardData) {
-            $pack->addCard($this->deserializeCard($cardData, $pack->getSides()));
+            $pack->addCard($this->denormalizeCard($cardData, $pack->getSides()));
         }
         foreach ($packData['extras'] as $extraData) {
-            $pack->addExtra($this->deserializeExtra($extraData));
+            $pack->addExtra($this->denormalizeExtra($extraData));
         }
         foreach ($packData['imageBasket']['items'] as $item) {
-            $pack->getImageBasket()->addItem($this->deserializeImageBasketItem($item));
+            $pack->getImageBasket()->addItem($this->denormalizeImageBasketItem($item));
         }
         return $pack;
     }
 
-    public function serializeSide(Side $side)
+    public function normalizeSide(Side $side)
     {
         $datae = array();
         foreach ($side->getData() as $data) {
             $datae[] = $this->dataSerializer->serializeData($data);
         }
 
-        return json_encode(
-            array(
-                 'type'         => $side->getType(),
-                 'sideNum'      => $side->getSideNum(),
-                 'templateCode' => $side->getTemplateCode(),
-                 'data'         => $datae,
-            )
+        return array(
+            'type'         => $side->getType(),
+            'sideNum'      => $side->getSideNum(),
+            'templateCode' => $side->getTemplateCode(),
+            'data'         => $datae,
         );
     }
 
-    public function deserializeSide($sideData)
+    public function denormalizeSide($sideData)
     {
         $side = new Side(
             $sideData['type'],
@@ -92,7 +97,30 @@ class PackModelSerializer
         return $side;
     }
 
-    public function deserializeCard($cardData, $packSides)
+    public function normalizeCard(Card $card)
+    {
+        $sides = array();
+        if ($card->getImageSide()) {
+            $sides[] = array(
+                $card->getImageSide()->getType(),
+                $card->getImageSide()->getSideNum()
+            );
+        }
+
+        if ($card->getDetailsSide()) {
+            $sides[] = array(
+                $card->getDetailsSide()->getType(),
+                $card->getDetailsSide()->getSideNum()
+            );
+        }
+
+        return array(
+            'cardId'    => $card->getId(),
+            'cardSides' => $sides,
+        );
+    }
+
+    public function denormalizeCard($cardData, $packSides)
     {
         $sides = array(
             Side::TYPE_IMAGE   => null,
@@ -109,26 +137,24 @@ class PackModelSerializer
         );
     }
 
-    public function serializeExtra(Extra $extra)
+    public function normalizeExtra(Extra $extra)
     {
-        return json_encode(
-            array(
-                'key'   => $extra->getKey(),
-                'value' => $extra->getValue(),
-            )
+        return array(
+            'key'   => $extra->getKey(),
+            'value' => $extra->getValue(),
         );
     }
 
-    public function deserializeExtra($extraData)
+    public function denormalizeExtra($extraData)
     {
         return new Extra($extraData['key'], $extraData['value']);
     }
 
-    public function serializeImageBasket(ImageBasket $imageBasket)
+    public function normalizeImageBasket(ImageBasket $imageBasket)
     {
         $items = array();
         foreach ($imageBasket->getItems() as $item) {
-            $items[] = $this->serializeImageBasketItem($item);
+            $items[] = $this->normalizeImageBasketItem($item);
         }
 
         return json_encode(
@@ -138,34 +164,32 @@ class PackModelSerializer
         );
     }
 
-    public function deserializeImageBasket($data)
+    public function denormalizeImageBasket($data)
     {
         $basket =  new ImageBasket();
-        foreach ($data['items'] => $itemData) {
-            $basket->addItem($this->deserializeImageBasketItem($data));
+        foreach ($data['items'] as $itemData) {
+            $basket->addItem($this->denormalizeImageBasketItem($itemData));
         }
         return $basket;
     }
 
-    public function serializeImageBasketItem(ImageBasketItem $item)
+    public function normalizeImageBasketItem(ImageBasketItem $item)
     {
         $imageItems = array();
         foreach ($item->getImageItems() as $imageItem){
-            $imageItems[] = $this->serializeImageBasketItem($imageItem);
+            $imageItems[] = $this->normalizeImageBasketItem($imageItem);
         }
 
-        return json_encode(
-            array(
-                 'resourceUri' => $item->getResourceUri(),
-                 'name'        => $item->getName(),
-                 'source'      => $item->getSource(),
-                 'cacheId'     => $item->getCacheId(),
-                 'imageItems'  => $imageItems,
-            )
+        return array(
+             'resourceUri' => $item->getResourceUri(),
+             'name'        => $item->getName(),
+             'source'      => $item->getSource(),
+             'cacheId'     => $item->getCacheId(),
+             'imageItems'  => $imageItems,
         );
     }
 
-    public function deserializeImageBasketItem($data)
+    public function denormalizeImageBasketItem($data)
     {
         $item = new ImageBasketItem(
             $data['resourceUri'],
@@ -174,25 +198,23 @@ class PackModelSerializer
             $data['cacheId']
         );
         foreach ($data['imageItems'] as $imageItem) {
-            $item->addImageItem($this->deserializeImageBasketItemImage($imageItem));
+            $item->addImageItem($this->denormalizeImageBasketItemImage($imageItem));
         }
         return $item;
     }
 
-    public function serializeImageBasketItemImage(ImageBasketItemImage $image)
+    public function normalizeImageBasketItemImage(ImageBasketItemImage $image)
     {
-        return json_encode(
-            array(
-                 'type'        => $image->getType(),
-                 'resourceUri' => $image->getResourceUri(),
-                 'width'       => $image->getWidth(),
-                 'height'      => $image->getHeight(),
-                 'rotation'    => $image->getRotation(),
-            )
+        return array(
+             'type'        => $image->getType(),
+             'resourceUri' => $image->getResourceUri(),
+             'width'       => $image->getWidth(),
+             'height'      => $image->getHeight(),
+             'rotation'    => $image->getRotation(),
         );
     }
 
-    public function deserializeImageBasketItemImage($data)
+    public function denormalizeImageBasketItemImage($data)
     {
         return new ImageBasketItemImage(
             $data['type'],
@@ -200,6 +222,38 @@ class PackModelSerializer
             $data['width'],
             $data['height'],
             $data['rotation']
+        );
+    }
+
+    public function normalizePhysicalSpec(PhysicalSpec $spec)
+    {
+        return array(
+            'productType'     => $spec->getProductType(),
+            'finishingOption' => $spec->getFinishingOption(),
+            'paperClass'      => $spec->getPaperClass(),
+            'packSize'        => $spec->getPackSize(),
+            'paperLaminate'   => $spec->getPaperLaminate(),
+        );
+    }
+
+    public static function serializePhysicalSpec(PhysicalSpec $spec)
+    {
+        $serializer = new self(new DataSerializer(new TypeSerializer()));
+        $str = json_encode($serializer->normalizePhysicalSpec($spec));
+        echo 'DEBUG ON LINE ',__LINE__, ' in ', __FILE__, "\n<pre>\n";
+        print_r($str);
+        echo "\n</pre>\n";
+        return $str;
+    }
+
+    public static function denormalizePhysicalSpec($data)
+    {
+        return new PhysicalSpec(
+            $data['productType'],
+            $data['paperClass'],
+            $data['finishingOption'],
+            $data['packSize'],
+            $data['paperLaminate']
         );
     }
 
