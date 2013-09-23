@@ -20,6 +20,11 @@ class PackModelSerializer
         $this->dataSerializer = $dataSerializer;
     }
 
+    public function serializePack(Pack $pack)
+    {
+        return json_encode($this->normalizePack($pack));
+    }
+
     public function normalizePack(Pack $pack)
     {
         $sides  = array();
@@ -38,14 +43,12 @@ class PackModelSerializer
             $cards[] = $this->normalizeCard($card);
         }
 
-        return json_encode(
-            array(
-                 'productCode' => $pack->getProductCode(),
-                 'numCards'    => $pack->getNumCards(),
-                 'sides'       => $sides,
-                 'extras'      => $extras,
-                 'imageBasket' => $this->normalizeImageBasket($pack->getImageBasket()),
-            )
+        return array(
+             'productCode' => $pack->getProductCode(),
+             'numCards'    => $pack->getNumCards(),
+             'sides'       => $sides,
+             'extras'      => $extras,
+             'imageBasket' => $this->normalizeImageBasket($pack->getImageBasket()),
         );
     }
 
@@ -67,6 +70,11 @@ class PackModelSerializer
             $pack->getImageBasket()->addItem($this->denormalizeImageBasketItem($item));
         }
         return $pack;
+    }
+
+    public function serializeSide(Side $side)
+    {
+        return json_encode($this->normalizeSide($side));
     }
 
     public function normalizeSide(Side $side)
@@ -236,14 +244,9 @@ class PackModelSerializer
         );
     }
 
-    public static function serializePhysicalSpec(PhysicalSpec $spec)
+    public function serializePhysicalSpec(PhysicalSpec $spec)
     {
-        $serializer = new self(new DataSerializer(new TypeSerializer()));
-        $str = json_encode($serializer->normalizePhysicalSpec($spec));
-        echo 'DEBUG ON LINE ',__LINE__, ' in ', __FILE__, "\n<pre>\n";
-        print_r($str);
-        echo "\n</pre>\n";
-        return $str;
+        return json_encode($this->normalizePhysicalSpec($spec));
     }
 
     public static function denormalizePhysicalSpec($data)

@@ -3,6 +3,11 @@ require_once 'vendor/autoload.php';
 use Symfony\Component\ClassLoader\UniversalClassLoader;
 use Guzzle\Http\Client as GuzzleClient;
 use Moo\Client\Client as MooClient;
+use Moo\Client\Serializer\DataSerializer;
+use Moo\Client\Serializer\PackModelSerializer;
+use Moo\Client\Serializer\TypeSerializer;
+
+
 // classloader
 $loader = new UniversalClassLoader();
 $loader->registerNamespace('Moosaic', __DIR__.'/lib/');
@@ -26,15 +31,18 @@ function createClient()
     return $client;
 }
 
+$serializer = new PackModelSerializer(new DataSerializer(new TypeSerializer()));
 $mooClient = MooClient::factory(array(
     'consumer_key'    => 'c3b12ce68314c0ee55bf6928d20eadb104d1d07da',
     'consumer_secret' => '91b4bc021958f6bc77eaccadab7878c3',
+    'command.params'  => array('serializer' => $serializer),
 ));
 $mooClient->addSubscriber(\Guzzle\Plugin\Log\LogPlugin::getDebugPlugin());
+
 ?><pre>
 <?php
 $output = $mooClient->createPack();
-$spec = $output->getPhysicalSpec();
+$spec   = $output->getPhysicalSpec();
 $packId = $output->getPack()->getId();
 
 $spec = new \Moo\PackModel\PhysicalSpec(

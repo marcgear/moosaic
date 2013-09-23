@@ -29,8 +29,7 @@ class PhysicalSpecOutput implements ResponseClassInterface
     public static function fromCommand(OperationCommand $command)
     {
         $response   = $command->getResponse()->json();
-        $serializer = new PackModelSerializer(new DataSerializer(new TypeSerializer()));
-        $spec = $serializer->denormalizePhysicalSpec($response['physicalSpec']);
+        $spec = $command['serializer']->denormalizePhysicalSpec($response['physicalSpec']);
         return new self($response['packId'], $spec);
     }
 

@@ -3,9 +3,7 @@ namespace Moo\Client;
 
 use Guzzle\Service\Command\OperationCommand;
 use Guzzle\Service\Command\ResponseClassInterface;
-use Moo\Client\Serializer\DataSerializer;
 use Moo\Client\Serializer\PackModelSerializer;
-use Moo\Client\Serializer\TypeSerializer;
 use Moo\PackModel\Pack;
 use Moo\PackModel\PhysicalSpec;
 
@@ -41,12 +39,11 @@ class PackMethodOutput implements ResponseClassInterface
 
     public static function fromCommand(OperationCommand $command)
     {
-        $response   = $command->getResponse()->json();
-        $serializer = new PackModelSerializer(new DataSerializer(new TypeSerializer()));
-        $pack       = $serializer->denormalizePack($response['packId'], $response['pack']);
+        $response = $command->getResponse()->json();
+        $pack     = $command['serializer']->denormalizePack($response['packId'], $response['pack']);
 
         if (isset($response['physicalSpec'])) {
-            $spec = $serializer->denormalizePhysicalSpec($response['physicalSpec']);
+            $spec = $command['serializer']->denormalizePhysicalSpec($response['physicalSpec']);
         } else {
             $spec = null;
         }

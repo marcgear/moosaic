@@ -21,18 +21,19 @@ $memcached->addServer('localhost', 11211);
 $cache = new \Doctrine\Common\Cache\MemcachedCache();
 $cache->setMemcached($memcached);
 
+
 $img = new Image($input);
 $img->makeThumb($thumb);
 $img->inspect();
 
 draw($img->getPixels());
 
-
 $finder = new ImageFinder(createClient(), '/rest/', $log, $cache);
 $images = array();
 foreach ($img->getColours() as $colour => $num) {
     $images[$colour] = $finder->getImages($colour, $num);
 }
+
 
 // work out how many packs we need
 // instantiate the moo pack(s)
