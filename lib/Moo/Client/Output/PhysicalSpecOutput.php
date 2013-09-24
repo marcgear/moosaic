@@ -1,11 +1,8 @@
 <?php
-namespace Moo\Client;
+namespace Moo\Client\Output;
 
 use Guzzle\Service\Command\OperationCommand;
 use Guzzle\Service\Command\ResponseClassInterface;
-use Moo\Client\Serializer\DataSerializer;
-use Moo\Client\Serializer\PackModelSerializer;
-use Moo\Client\Serializer\TypeSerializer;
 use Moo\PackModel\PhysicalSpec;
 
 class PhysicalSpecOutput implements ResponseClassInterface

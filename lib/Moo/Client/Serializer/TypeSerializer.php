@@ -3,6 +3,7 @@ namespace Moo\Client\Serializer;
 
 use Moo\PackModel\Type\Font;
 use Moo\PackModel\Type\Box;
+use Moo\PackModel\Type\Colour;
 use Moo\PackModel\Type\CMYK;
 use Moo\PackModel\Type\RGB;
 

@@ -6,7 +6,6 @@ use Moo\PackModel\Data\Image;
 use Moo\PackModel\Data\MultiLineText;
 use Moo\PackModel\Data\Text;
 use Moo\PackModel\Data\Box;
-use Weasel\Annotation\Tests\Multi;
 
 class DataSerializer
 {

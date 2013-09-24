@@ -1,9 +1,8 @@
 <?php
-namespace Moo\Client;
+namespace Moo\Client\Output;
 
 use Guzzle\Service\Command\OperationCommand;
 use Guzzle\Service\Command\ResponseClassInterface;
-use Moo\Client\Serializer\PackModelSerializer;
 use Moo\PackModel\Pack;
 use Moo\PackModel\PhysicalSpec;
 

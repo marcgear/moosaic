@@ -5,6 +5,7 @@ use Guzzle\Common\Collection;
 use Guzzle\Plugin\Oauth\OauthPlugin;
 use Guzzle\Service\Client as GuzzleClient;
 use Guzzle\Service\Description\ServiceDescription;
+use Moo\Client\Serializer\PackModelSerializer;
 
 class Client extends GuzzleClient
 {
@@ -17,9 +18,16 @@ class Client extends GuzzleClient
             'base_url',
             'consumer_key',
             'consumer_secret',
+            'serializer',
         );
+
         // merge in the defaults and validate the config
         $config = Collection::fromConfig($config, $default, $required);
+
+        if ($config['serializer'] instanceof PackModelSerializer) {
+            throw new InvalidArgumentException('Config is expecting key \'serializer\' to be of type
+            \Moo\Client\Serializer\PackModelSerializer');
+        }
 
         // instantiate one of us
         $client = new self($config->get('base_url'), $config);

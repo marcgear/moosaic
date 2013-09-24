@@ -1,6 +1,8 @@
 <?php
 namespace Moo\PackModel;
 
+use Moo\PackModel\ImageBasket\ImageBasket;
+
 class Pack
 {
     protected $id;

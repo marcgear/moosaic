@@ -1,5 +1,5 @@
 <?php
-namespace Moo\PackModel;
+namespace Moo\PackModel\ImageBasket;
 
 class ImageBasketItemImage
 {

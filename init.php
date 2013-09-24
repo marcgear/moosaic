@@ -31,7 +31,9 @@ function createClient()
     return $client;
 }
 
+// this stinks
 $serializer = new PackModelSerializer(new DataSerializer(new TypeSerializer()));
+
 $mooClient = MooClient::factory(array(
     'consumer_key'    => 'c3b12ce68314c0ee55bf6928d20eadb104d1d07da',
     'consumer_secret' => '91b4bc021958f6bc77eaccadab7878c3',

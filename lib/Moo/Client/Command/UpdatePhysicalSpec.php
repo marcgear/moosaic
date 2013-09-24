@@ -2,7 +2,6 @@
 namespace Moo\Client\Command;
 
 use Guzzle\Service\Command\AbstractCommand;
-use Moo\Client\Serializer\PackModelSerializer;
 
 class UpdatePhysicalSpec extends AbstractCommand
 {

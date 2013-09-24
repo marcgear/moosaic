@@ -1,15 +1,14 @@
 <?php
 namespace Moo\Client\Serializer;
 
-use JMS\Serializer\Annotation\Type;
 use Moo\PackModel\Pack;
 use Moo\PackModel\PhysicalSpec;
 use Moo\PackModel\Side;
 use Moo\PackModel\Card;
 use Moo\PackModel\Extra;
-use Moo\PackModel\ImageBasket;
-use Moo\PackModel\ImageBasketItem;
-use Moo\PackModel\ImageBasketItemImage;
+use Moo\PackModel\ImageBasket\ImageBasket;
+use Moo\PackModel\ImageBasket\ImageBasketItem;
+use Moo\PackModel\ImageBasket\ImageBasketItemImage;
 
 class PackModelSerializer
 {
