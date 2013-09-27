@@ -11,7 +11,7 @@ class UpdatePack extends AbstractCommand
         $this->request = $this->client->post();
         $query = $this->request->getQuery();
         $query->set('method', 'moo.pack.updatePack');
-        $query->set('packId', $this['packId']);
+        $query->set('packId', $this['pack']->getId());
         $query->set('includePhysicalSpec', true);
 
         if (isset($this['friendlyName'])) {

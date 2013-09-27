@@ -3,6 +3,7 @@ namespace Moo\Client\Output;
 
 use Guzzle\Service\Command\OperationCommand;
 use Guzzle\Service\Command\ResponseClassInterface;
+use Moo\Client\Command\CreatePack;
 use Moo\PackModel\Pack;
 use Moo\PackModel\PhysicalSpec;
 

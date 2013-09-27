@@ -2,17 +2,28 @@
 namespace Moo\Client\Command;
 
 use Guzzle\Service\Command\AbstractCommand;
+use Guzzle\Service\Command\OperationCommand;
+use Moo\Client\Output\PackMethodOutput;
 
-class CreatePack extends AbstractCommand
+/**
+ * Class CreatePack
+ * Command to create a pack over the API
+ *
+ * @package Moo\Client\Command
+ */
+class CreatePack extends OperationCommand
 {
+    /**
+     * Build the command
+     * Will _always_ setIncludePhysicalSpec
+     */
     protected function build()
     {
         // setup the request
         $this->request = $this->client->post();
         $query = $this->request->getQuery();
         $query->set('method', 'moo.pack.createPack');
-        $query->set('packId', $this['packId']);
-        $query->set('includePhysicalSpec', true);
+        $query->set('includePhysicalSpec', 'true');
 
         if (isset($this['trackingId'])) {
             $query->set('trackingId', $this['trackingId']);
@@ -29,7 +40,7 @@ class CreatePack extends AbstractCommand
         if (isset($this['product'])) {
             $query->set('product', $this['product']);
         } else {
-            $query->set('product', 'businesscards');
+            $query->set('product', 'businesscard');
         }
 
         // serialize the pack and physical spec if they've been given
@@ -41,5 +52,10 @@ class CreatePack extends AbstractCommand
             $packStr = $this['serializer']->serializePack($this['pack']);
             $query->set('pack', $packStr);
         }
+    }
+
+    public function process()
+    {
+        $this->result = PackMethodOutput::fromCommand($this);
     }
 }

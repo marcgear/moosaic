@@ -2,7 +2,7 @@
 namespace Moosaic;
 use Imagick;
 
-class Image
+class InputImage
 {
     protected $_filename;
     protected $_thumb;
@@ -68,8 +68,8 @@ class Image
     protected function _intToHex($rgb)
     {
         $r = str_pad(dechex(($rgb >> 16) & 0xFF), 2, '0', STR_PAD_LEFT);
-        $g = str_pad(dechex(($rgb >> 8) & 0xFF), 2, '0', STR_PAD_LEFT);
-        $b = str_pad(dechex($rgb & 0xFF), 2, '0', STR_PAD_LEFT);
+        $g = str_pad(dechex(($rgb >> 8) & 0xFF),  2, '0', STR_PAD_LEFT);
+        $b = str_pad(dechex($rgb & 0xFF),         2, '0', STR_PAD_LEFT);
         $hex = $r.$g.$b;
         return $hex;
     }

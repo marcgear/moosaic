@@ -31,6 +31,11 @@ class Text extends Data
 
     const TYPE = 'textData';
 
+    const ALIGN_LEFT   = 'left';
+    const ALIGN_RIGHT  = 'right';
+    const ALIGN_CENTER = 'center';
+
+
     public function __construct($linkId, $text, Font $font, Colour $colour, $pointSize, $alignment)
     {
         parent::__construct($linkId);

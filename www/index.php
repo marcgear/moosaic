@@ -4,6 +4,10 @@ require_once __DIR__.'/../init.php';
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Doctrine\Common\Cache\MemcachedCache;
+use Moo\Client\Client as MooClient;
+use Moo\Client\Serializer\DataSerializer;
+use Moo\Client\Serializer\PackModelSerializer;
+use Moo\Client\Serializer\TypeSerializer;
 
 define('DATA_DIR', __DIR__ . '/../data');
 $input = DATA_DIR.'/moross.jpg';
@@ -21,8 +25,16 @@ $memcached->addServer('localhost', 11211);
 $cache = new \Doctrine\Common\Cache\MemcachedCache();
 $cache->setMemcached($memcached);
 
+// this stinks
+$serializer = new PackModelSerializer(new DataSerializer(new TypeSerializer()));
 
-$img = new Image($input);
+$mooClient = MooClient::factory(array(
+     'consumer_key'    => 'c3b12ce68314c0ee55bf6928d20eadb104d1d07da',
+     'consumer_secret' => '91b4bc021958f6bc77eaccadab7878c3',
+     'command.params'  => array('serializer' => $serializer),
+));
+
+$img = new InputImage($input);
 $img->makeThumb($thumb);
 $img->inspect();
 
@@ -34,14 +46,32 @@ foreach ($img->getColours() as $colour => $num) {
     $images[$colour] = $finder->getImages($colour, $num);
 }
 
+$mooClient->addSubscriber(\Guzzle\Plugin\Log\LogPlugin::getDebugPlugin());
+
+echo "<pre>";
+$output = $mooClient->createPack(array('product' => 'businesscard'));
+$pack   = $output->getPack();
+
+$builder = new PackBuilder($pack);
+$y = 0;
+foreach ($img->getPixels() as $pixels) {
+    $x = 0;
+    foreach ($pixels as $pixel) {
+        $builder->addCard($colour, '', $x, $y);
+        $x++;
+    }
+    $y++;
+}
+
+//$mooClient->updatePack($builder->getPack());
+echo "</pre>";
+
 
 // work out how many packs we need
 // instantiate the moo pack(s)
 // create cards with an image on one side, and position on the other
 // add each one to the cart
 // link off to it.
-
-//draw($img->getPixels(), $images);
 
 function draw($rows, $images = array())
 {
