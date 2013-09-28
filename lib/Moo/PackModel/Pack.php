@@ -57,7 +57,7 @@ class Pack
     {
         $sides = array();
         foreach ($this->sides as $side) {
-            $sides[$side->getType().'-'.$side->getNum()] = $side;
+            $sides[$side->getType().'-'.$side->getSideNum()] = $side;
         }
         return $sides;
     }

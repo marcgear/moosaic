@@ -1,9 +1,7 @@
 <?php
 namespace Moo\Client\Command;
 
-use Guzzle\Service\Command\AbstractCommand;
-
-class UpdatePack extends AbstractCommand
+class UpdatePack extends PackCommand
 {
     protected function build()
     {
@@ -19,6 +17,11 @@ class UpdatePack extends AbstractCommand
         }
 
         $packStr = $this['serializer']->serializePack($this['pack']);
-        $query->set('pack', $packStr);
+        $this->request->addPostFields(array('pack' => $packStr));
+    }
+
+    public function process()
+    {
+        $this->result = PackMethodOutput::fromCommand($this);
     }
 }

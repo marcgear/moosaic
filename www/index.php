@@ -8,6 +8,7 @@ use Moo\Client\Client as MooClient;
 use Moo\Client\Serializer\DataSerializer;
 use Moo\Client\Serializer\PackModelSerializer;
 use Moo\Client\Serializer\TypeSerializer;
+use Moo\PackModel\Type\RGB;
 
 define('DATA_DIR', __DIR__ . '/../data');
 $input = DATA_DIR.'/moross.jpg';
@@ -49,21 +50,31 @@ foreach ($img->getColours() as $colour => $num) {
 $mooClient->addSubscriber(\Guzzle\Plugin\Log\LogPlugin::getDebugPlugin());
 
 echo "<pre>";
-$output = $mooClient->createPack(array('product' => 'businesscard'));
-$pack   = $output->getPack();
-
-$builder = new PackBuilder($pack);
+$factory = new PackFactory($mooClient, array('product' => 'businesscard'));
+$builder = new PackBuilder($factory);
 $y = 0;
 foreach ($img->getPixels() as $pixels) {
     $x = 0;
     foreach ($pixels as $pixel) {
+        $colour = new RGB(
+            hexdec(substr($pixel, 0, 2)),
+            hexdec(substr($pixel, 2, 2)),
+            hexdec(substr($pixel, 4, 2))
+        );
         $builder->addCard($colour, '', $x, $y);
         $x++;
     }
     $y++;
 }
+foreach ($builder->getPacks() as $pack) {
+    $response = $mooClient->updatePack(array('pack' => $pack));
+    echo 'DEBUG ON LINE ',__LINE__, ' in ', __FILE__, "\n<pre>\n";
+    print_r($response);
+    echo "\n</pre>\n";
+    exit;
+}
 
-//$mooClient->updatePack($builder->getPack());
+
 echo "</pre>";
 
 

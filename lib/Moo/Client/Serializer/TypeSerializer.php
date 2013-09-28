@@ -9,7 +9,7 @@ use Moo\PackModel\Type\RGB;
 
 class TypeSerializer
 {
-    public function serializeFont(Font $font)
+    public function normalizeFont(Font $font)
     {
         return array(
             'family' => $font->getFamily(),

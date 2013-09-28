@@ -1,8 +1,6 @@
 <?php
 namespace Moo\Client\Command;
 
-use Guzzle\Service\Command\AbstractCommand;
-use Guzzle\Service\Command\OperationCommand;
 use Moo\Client\Output\PackMethodOutput;
 
 /**
@@ -11,7 +9,7 @@ use Moo\Client\Output\PackMethodOutput;
  *
  * @package Moo\Client\Command
  */
-class CreatePack extends OperationCommand
+class CreatePack extends PackCommand
 {
     /**
      * Build the command

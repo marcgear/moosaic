@@ -80,7 +80,7 @@ class PackModelSerializer
     {
         $datae = array();
         foreach ($side->getData() as $data) {
-            $datae[] = $this->dataSerializer->serializeData($data);
+            $datae[] = $this->dataSerializer->normalizeData($data);
         }
 
         return array(
