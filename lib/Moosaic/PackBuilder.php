@@ -60,7 +60,7 @@ class PackBuilder
     protected function createImageSide(Colour $colour, $image)
     {
         $sideNum = count($this->currentPack->getSides()) + 1;
-        $side    = new Side(Side::TYPE_IMAGE, $sideNum, 'businesscard_full_image');
+        $side    = new Side(Side::TYPE_IMAGE, $sideNum, 'businesscard_full_image_landscape');
         $data    = new Box('background_box', $colour);
         $side->addData($data);
         return $side;
@@ -77,11 +77,11 @@ class PackBuilder
         $line3   = 'y = '.$y;
 
         $sideNum = count($this->currentPack->getSides()) + 1;
-        $side    = new Side(Side::TYPE_IMAGE, $sideNum, 'businesscard_full_text_landscape');
+        $side    = new Side(Side::TYPE_DETAILS, $sideNum, 'businesscard_full_text_landscape');
         $font    = new Font('bryant', false, false);
         $colour  = new CMYK(0, 0, 0, 100);
-        $side->addData(new Text('back_line_2', $line2, $font, $colour, 8, Text::ALIGN_LEFT));
-        $side->addData(new Text('back_line_3', $line3, $font, $colour, 8, Text::ALIGN_LEFT));
+        $side->addData(new Text('back_line_2', $line2, $font, $colour, 4, Text::ALIGN_LEFT));
+        $side->addData(new Text('back_line_3', $line3, $font, $colour, 4, Text::ALIGN_LEFT));
 
         return $side;
     }

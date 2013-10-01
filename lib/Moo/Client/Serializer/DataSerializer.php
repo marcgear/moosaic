@@ -21,19 +21,19 @@ class DataSerializer
 
     public function normalizeData(Data $data)
     {
-        $str = null;
+        $out = array();
         switch ($data->getType()) {
             case Text::TYPE:
             case MultiLineText::TYPE:
-                $str = $this->normalizeText($data);
+                $out = $this->normalizeText($data);
                 break;
             case Image::TYPE:
-                $str = $this->normalizeImage($data);
+                $out = $this->normalizeImage($data);
                 break;
             case Box::TYPE:
-                $str = $this->normalizeBox($data);
+                $out = $this->normalizeBox($data);
         }
-        return $str;
+        return $out;
     }
 
     public function denormalizeData($data)
@@ -50,7 +50,7 @@ class DataSerializer
                 $obj = $this->denormalizeImage($data);
                 break;
             case Box::TYPE:
-                $obj = $this->denormalizeImage($data);
+                $obj = $this->denormalizeBox($data);
                 break;
         }
         return $obj;
@@ -61,6 +61,7 @@ class DataSerializer
         return array(
              'linkId'    => $text->getLinkId(),
              'type'      => $text->getType(),
+             'text'      => $text->getText(),
              'font'      => $this->typeSerializer->normalizeFont($text->getFont()),
              'colour'    => $this->typeSerializer->normalizeColour($text->getColour()),
              'pointSize' => $text->getPointSize(),
@@ -128,7 +129,7 @@ class DataSerializer
         return array(
             'linkId' => $box->getLinkId(),
             'type'   => $box->getType(),
-            'colour' => $this->typeSerializer->denormalizeColour($box->getColour()),
+            'colour' => $this->typeSerializer->normalizeColour($box->getColour()),
         );
     }
 

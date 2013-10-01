@@ -99,7 +99,7 @@ class PackModelSerializer
             $sideData['templateCode']
         );
         foreach ($sideData['data'] as $data) {
-            $side->addData($this->dataSerializer->deserializeData($data));
+            $side->addData($this->dataSerializer->denormalizeData($data));
         }
         return $side;
     }
@@ -164,10 +164,8 @@ class PackModelSerializer
             $items[] = $this->normalizeImageBasketItem($item);
         }
 
-        return json_encode(
-            array(
-                 'items' => $items,
-            )
+        return array(
+             'items' => $items,
         );
     }
 

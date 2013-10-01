@@ -12,27 +12,28 @@ class TypeSerializer
     public function normalizeFont(Font $font)
     {
         return array(
-            'family' => $font->getFamily(),
+            'fontFamily' => $font->getFamily(),
             'bold'   => $font->getBold(),
             'italic' => $font->getItalic(),
         );
     }
     public function denormalizeFont($data)
     {
-        return new Font($data['family'], $data['bold'], $data['italic']);
+        return new Font($data['fontFamily'], $data['bold'], $data['italic']);
     }
 
     public function normalizeColour(Colour $colour)
     {
         $data = array_merge(
             $colour->getValues(),
-            array('type' => get_class($colour) == 'CMYK' ? 'CMYK' : 'RGB')
+            array('type' => ($colour instanceof CMYK) ? 'CMYK' : 'RGB')
         );
-        return json_encode($data);
+        return $data;
     }
 
     public function denormalizeColour($data)
     {
+
         $colour = null;
         switch ($data['type']) {
             case 'CMYK':
