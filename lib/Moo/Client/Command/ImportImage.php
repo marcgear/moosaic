@@ -22,6 +22,11 @@ class ImportImage extends AbstractCommand
         if (isset($this['source'])) {
             $query->set('source', $this['source']);
         }
+        
+        echo 'DEBUG ON LINE ',__LINE__, ' in ', __FILE__, "\n<pre>\n";
+        print_r($this['imageUrl']);
+        echo "\n</pre>\n";
+        
         $this->request->addPostFields(array('imageUrl' => $this['imageUrl']));
 
     }
