@@ -67,8 +67,6 @@
                 }
             }
         },
-        "uploadImage":{},
-        "importImage":{},
         "measureText":{}
     }
 }

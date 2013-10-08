@@ -36,17 +36,17 @@ $mooClient = MooClient::factory(array(
 ));
 
 $img = new InputImage($input);
-$img->makeThumb($thumb);
+$img->makeThumb($thumb, 38);
 $img->inspect();
 
-draw($img->getPixels());
+//draw($img->getPixels());
 
-$finder = new ImageFinder(createClient(), '/rest/', $log, $cache);
+$finder = new ImageFinder(createTinEyeClient(), createFlickrClient(), $log, $cache);
 $images = array();
 foreach ($img->getColours() as $colour => $num) {
+    echo '.';
     $images[$colour] = $finder->getImages($colour, $num);
 }
-
 $mooClient->addSubscriber(\Guzzle\Plugin\Log\LogPlugin::getDebugPlugin());
 
 echo "<pre>";
@@ -55,23 +55,33 @@ $builder = new PackBuilder($factory);
 $y = 0;
 foreach ($img->getPixels() as $pixels) {
     $x = 0;
-    foreach ($pixels as $pixel) {
+    foreach ($pixels as $hex) {
         $colour = new RGB(
-            hexdec(substr($pixel, 0, 2)),
-            hexdec(substr($pixel, 2, 2)),
-            hexdec(substr($pixel, 4, 2))
+            hexdec(substr($hex, 0, 2)),
+            hexdec(substr($hex, 2, 2)),
+            hexdec(substr($hex, 4, 2))
         );
-        $builder->addCard($colour, '', $x, $y);
+        if (isset($images[$hex])
+            && $images[$hex] instanceof \SplStack
+            && $images[$hex]->count()) {
+            $imageUrl = $images[$hex]->pop();
+        }
+        $response = $mooClient->importImage(array('imageUrl' => $imageUrl));
+        echo 'DEBUG ON LINE ',__LINE__, ' in ', __FILE__, "\n<pre>\n";
+        print_r($response);
+        echo "\n</pre>\n";
+        $builder->addCard($colour, $imageUrl , $x, $y);
         $x++;
+
     }
     $y++;
 }
+
 foreach ($builder->getPacks() as $pack) {
     $response = $mooClient->updatePack(array('pack' => $pack));
     echo 'DEBUG ON LINE ',__LINE__, ' in ', __FILE__, "\n<pre>\n";
-    print_r($response);
+    print_r($response->getDropIns());
     echo "\n</pre>\n";
-    exit;
 }
 
 

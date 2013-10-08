@@ -23,6 +23,9 @@ class PackBuilder
      */
     protected $currentPack;
 
+    /**
+     * @var array
+     */
     protected $packs = array();
 
     public function __construct(PackFactory $factory)
@@ -61,8 +64,13 @@ class PackBuilder
     {
         $sideNum = count($this->currentPack->getSides()) + 1;
         $side    = new Side(Side::TYPE_IMAGE, $sideNum, 'businesscard_full_image_landscape');
-        $data    = new Box('background_box', $colour);
-        $side->addData($data);
+        $bgbox    = new Box('background_box', $colour);
+        $side->addData($bgbox);
+
+        //$image = new Image('variable_image_front');
+        //$side->addData($image);
+
+
         return $side;
     }
 
@@ -96,6 +104,4 @@ class PackBuilder
         $this->packs[$pack->getId()] = $pack;
         $this->currentPack           = $pack;
     }
-
-
 }

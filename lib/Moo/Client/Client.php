@@ -5,7 +5,6 @@ use Guzzle\Common\Collection;
 use Guzzle\Plugin\Oauth\OauthPlugin;
 use Guzzle\Service\Client as GuzzleClient;
 use Guzzle\Service\Description\ServiceDescription;
-use Moo\Client\Serializer\PackModelSerializer;
 
 class Client extends GuzzleClient
 {
