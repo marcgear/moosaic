@@ -2,15 +2,17 @@
 namespace Moo\Client\Command;
 
 use Guzzle\Service\Command\AbstractCommand;
+use Guzzle\Service\Command\OperationCommand;
+use Moo\Client\Output\ImportImageOutput;
 
-class ImportImage extends AbstractCommand
+class ImportImage extends OperationCommand
 {
     protected function build()
     {
         // setup the request
         $this->request = $this->client->post();
         $query = $this->request->getQuery();
-        $query->set('method', 'moo.image.uploadImage');
+        $query->set('method', 'moo.image.importImage');
         if (isset($this['imageType'])) {
             $query->set('imageType', $this['imageType']);
         }
@@ -23,16 +25,12 @@ class ImportImage extends AbstractCommand
             $query->set('source', $this['source']);
         }
         
-        echo 'DEBUG ON LINE ',__LINE__, ' in ', __FILE__, "\n<pre>\n";
-        print_r($this['imageUrl']);
-        echo "\n</pre>\n";
-        
         $this->request->addPostFields(array('imageUrl' => $this['imageUrl']));
 
     }
 
     protected function process()
     {
-
+        $this->result = ImportImageOutput::fromCommand($this);
     }
 }

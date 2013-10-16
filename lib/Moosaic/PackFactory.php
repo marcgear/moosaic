@@ -24,10 +24,6 @@ class PackFactory
         if (!$options) {
             $options = $this->options;
         }
-        echo 'DEBUG ON LINE ',__LINE__, ' in ', __FILE__, "\n<pre>\n";
-        print_r($options);
-        echo "\n</pre>\n";
-        exit;
         $output = $this->client->createPack($options);
         return $output->getPack();
     }

@@ -9,38 +9,55 @@ class ImageFinder
     /**
      * @var \Guzzle\Http\ClientInterface
      */
-    protected $_tinEyeClient;
+    protected $tinEyeClient;
 
     /**
      * @var \Guzzle\Http\ClientInterface
      */
-    protected $_flickrClient;
+    protected $flickrClient;
 
     /**
      * @var \Psr\Log\LoggerInterface
      */
-    protected $_log;
+    protected $log;
 
     /**
      * @var \Doctrine\Common\Cache\Cache
      */
-    protected $_cache;
+    protected $cache;
+
+    protected $stats = array();
 
     public function __construct(ClientInterface $tinEyeClient,
                                 ClientInterface $flickrClient,
                                 LoggerInterface $log,
                                 Cache $cache = null)
     {
-        $this->_tinEyeClient = $tinEyeClient;
-        $this->_flickrClient = $flickrClient;
-        $this->_log          = $log;
-        $this->_cache        = $cache;
+        $this->tinEyeClient = $tinEyeClient;
+        $this->flickrClient = $flickrClient;
+        $this->log          = $log;
+        $this->cache        = $cache;
+        $this->resetStats();
+    }
+
+    protected function resetStats()
+    {
+        $this->stats = array(
+            'flickr' => array(
+                'fail'    => 0,
+                'success' => 0,
+            ),
+            'tineye' => array(
+                'fail'    => 0,
+                'success' => 0,
+            ),
+        );
     }
 
     protected function getCacheResult($key)
     {
         $images = new \SplStack();
-        foreach ($this->_cache->fetch($key) as $image) {
+        foreach ($this->cache->fetch($key) as $image) {
             $images->push($image);
         }
         return $images;
@@ -52,13 +69,13 @@ class ImageFinder
         foreach ($images as $image) {
             $array[] = $image;
         }
-        $this->_cache->save($key, $array);
+        $this->cache->save($key, $array);
     }
 
     public function getImages($colour, $num)
     {
         $key = implode('-', array('images', $colour, $num));
-        if ($this->_cache && $this->_cache->contains($key)) {
+        if ($this->cache && $this->cache->contains($key)) {
             return $this->getCacheResult($key);
         }
         $images = new \SplStack();
@@ -68,7 +85,7 @@ class ImageFinder
                 'colors' => array($colour),
             )
         );
-        $request = $this->_tinEyeClient->get(null, array(), $options);
+        $request = $this->tinEyeClient->get(null, array(), $options);
         $response = $request->send();
         $data = $response->json();
 
@@ -77,7 +94,8 @@ class ImageFinder
                 'data'    => $data,
                 'request' => $request->getUrl(),
             );
-            $this->_log->addNotice('Unexpected TinEye API response', $context);
+            $this->log->addNotice('Unexpected TinEye API response', $context);
+            $this->stats['tineye']['fail']++;
             return $images;
         }
 
@@ -86,7 +104,7 @@ class ImageFinder
             $images->push($url);
         }
 
-        if ($this->_cache && $images->count()) {
+        if ($this->cache && $images->count()) {
             $this->cacheResult($key, $images);
         }
         ;
@@ -101,7 +119,7 @@ class ImageFinder
             ),
         );
         $headers  = array();
-        $request  = $this->_flickrClient->get(null, $headers, $options);
+        $request  = $this->flickrClient->get(null, $headers, $options);
         $response = $request->send();
         $data     = $response->json();
 
@@ -110,9 +128,11 @@ class ImageFinder
                 'data'    => $data,
                 'request' => $request->getUrl(),
             );
-            $this->_log->addNotice('Unexpected Flickr API response', $context);
+            $this->log->addNotice('Unexpected Flickr API response', $context);
+            $this->stats['flickr']['fail']++;
             return '';
         }
+        $this->stats['flickr']['success']++;
         return $this->flickrResponse2Url($data);
     }
 
@@ -125,5 +145,10 @@ class ImageFinder
         $size     = 'b';
         $url      = "http://farm{$farmId}.staticflickr.com/{$serverId}/{$photoId}_{$secret}_{$size}.jpg";
         return $url;
+    }
+
+    public function getStats()
+    {
+        return $this->stats;
     }
 }

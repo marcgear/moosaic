@@ -26,6 +26,10 @@ $memcached->addServer('localhost', 11211);
 $cache = new \Doctrine\Common\Cache\MemcachedCache();
 $cache->setMemcached($memcached);
 
+if ($_GET['flushCache']) {
+    $cache->flushAll();
+};
+
 // this stinks
 $serializer = new PackModelSerializer(new DataSerializer(new TypeSerializer()));
 
@@ -34,20 +38,22 @@ $mooClient = MooClient::factory(array(
      'consumer_secret' => '91b4bc021958f6bc77eaccadab7878c3',
      'command.params'  => array('serializer' => $serializer),
 ));
+$mooClient->addSubscriber(\Guzzle\Plugin\Log\LogPlugin::getDebugPlugin());
 
+// read the image
 $img = new InputImage($input);
 $img->makeThumb($thumb, 38);
 $img->inspect();
+//$img->draw();
 
-//draw($img->getPixels());
 
 $finder = new ImageFinder(createTinEyeClient(), createFlickrClient(), $log, $cache);
 $images = array();
 foreach ($img->getColours() as $colour => $num) {
-    echo '.';
     $images[$colour] = $finder->getImages($colour, $num);
 }
-$mooClient->addSubscriber(\Guzzle\Plugin\Log\LogPlugin::getDebugPlugin());
+print_r($finder->getStats());
+exit;
 
 echo "<pre>";
 $factory = new PackFactory($mooClient, array('product' => 'businesscard'));
@@ -66,13 +72,15 @@ foreach ($img->getPixels() as $pixels) {
             && $images[$hex]->count()) {
             $imageUrl = $images[$hex]->pop();
         }
-        $response = $mooClient->importImage(array('imageUrl' => $imageUrl));
-        echo 'DEBUG ON LINE ',__LINE__, ' in ', __FILE__, "\n<pre>\n";
-        print_r($response);
-        echo "\n</pre>\n";
-        $builder->addCard($colour, $imageUrl , $x, $y);
-        $x++;
 
+        if ($imageUrl) {
+            $output = $mooClient->importImage(array('imageUrl' => $imageUrl));
+            $item = $output->getImageBasketItem();
+        } else {
+            $item = null;
+        }
+        $builder->addCard($colour, $item , $x, $y);
+        $x++;
     }
     $y++;
 }
@@ -86,30 +94,3 @@ foreach ($builder->getPacks() as $pack) {
 
 
 echo "</pre>";
-
-
-// work out how many packs we need
-// instantiate the moo pack(s)
-// create cards with an image on one side, and position on the other
-// add each one to the cart
-// link off to it.
-
-function draw($rows, $images = array())
-{
-?>
-    <table border=0>
-    <?php
-    foreach ($rows as $pixels) {
-    ?>
-    <tr>
-        <?php foreach ($pixels as $pixel) {?>
-        <td width="22" height="16" style="background-color:<?php echo $pixel;?>;"><img src="<?php if (isset($images[$pixel][0])) { echo $images[$pixel][0]; }?>"</td>
-        <?php } ?>
-    </tr>
-    <?php } ?>
-    </table>
-    <?php
-}
-
-
-

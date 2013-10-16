@@ -22,9 +22,4 @@ class UpdatePack extends PackCommand
         
         $this->request->addPostFields(array('pack' => $packStr));
     }
-
-    public function process()
-    {
-        $this->result = PackMethodOutput::fromCommand($this);
-    }
 }

@@ -2,6 +2,7 @@
 namespace Moosaic;
 
 use Moo\PackModel\Card;
+use Moo\PackModel\ImageBasket\ImageBasketItem;
 use Moo\PackModel\Pack;
 use Moo\PackModel\Side;
 use Moo\PackModel\Data\Box;
@@ -10,6 +11,7 @@ use Moo\PackModel\Data\Text;
 use Moo\PackModel\Type\CMYK;
 use Moo\PackModel\Type\Colour;
 use Moo\PackModel\Type\Font;
+use Moo\PackModel\Type\Box as BoundingBox;
 
 class PackBuilder
 {
@@ -41,13 +43,14 @@ class PackBuilder
         return $this->packs;
     }
 
-    public function addCard(Colour $colour, $image, $x, $y)
+    public function addCard(Colour $colour, ImageBasketItem $imageBasketItem = null, $x, $y)
     {
         if (!$this->currentPack || count($this->currentPack->getCards()) == $this->currentPack->getNumCards()) {
+            return;
             $this->createNewPack();
         }
         $cardNum     = count($this->currentPack->getCards()) + 1;
-        $imageSide   = $this->createImageSide($colour, $image);
+        $imageSide   = $this->createImageSide($colour, $imageBasketItem);
         $detailsSide = $this->createDetailsSide($x, $y);
         $card        = new Card($cardNum, $imageSide, $detailsSide);
 
@@ -60,15 +63,26 @@ class PackBuilder
      *
      * @return Side
      */
-    protected function createImageSide(Colour $colour, $image)
+    protected function createImageSide(Colour $colour, ImageBasketItem $imageBasketItem = null)
     {
         $sideNum = count($this->currentPack->getSides()) + 1;
         $side    = new Side(Side::TYPE_IMAGE, $sideNum, 'businesscard_full_image_landscape');
-        $bgbox    = new Box('background_box', $colour);
-        $side->addData($bgbox);
+        $bgBox   = new Box('background_box', $colour);
+        $side->addData($bgBox);
 
-        //$image = new Image('variable_image_front');
-        //$side->addData($image);
+        // add the image to the imagebasket
+        if ($imageBasketItem) {
+            $this->currentPack->getImageBasket()->addItem($imageBasketItem);
+            $box = new BoundingBox(44, 29.5, 88, 59, 0);
+            $image = new Image(
+                'variable_image_front',
+                $box,
+                $imageBasketItem->getResourceUri(),
+                null,
+                false
+            );
+            $side->addData($image);
+        }
 
 
         return $side;

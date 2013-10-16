@@ -74,5 +74,19 @@ class InputImage
         return $hex;
     }
 
-
+    public function draw()
+    {?>
+        <table border=0>
+        <?php
+        foreach ($this->getPixels() as $pixels) {
+            ?>
+            <tr>
+                <?php foreach ($pixels as $pixel) {?>
+                    <td width="22" height="16" style="background-color:<?php echo $pixel;?>;"><img src="<?php if (isset($images[$pixel][0])) { echo $images[$pixel][0]; }?>"</td>
+                <?php } ?>
+            </tr>
+        <?php } ?>
+        </table>
+        <?php
+    }
 }

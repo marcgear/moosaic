@@ -196,10 +196,12 @@ class PackModelSerializer
 
     public function denormalizeImageBasketItem($data)
     {
+        $name   = isset($data['name']) ? $data['name'] : null;
+        $source = isset($data['source']) ? $data['source'] : null;
         $item = new ImageBasketItem(
             $data['resourceUri'],
-            $data['name'],
-            $data['source'],
+            $name,
+            $source,
             $data['cacheId']
         );
         foreach ($data['imageItems'] as $imageItem) {

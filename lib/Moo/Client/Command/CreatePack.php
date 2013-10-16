@@ -51,9 +51,4 @@ class CreatePack extends PackCommand
             $query->set('pack', $packStr);
         }
     }
-
-    public function process()
-    {
-        $this->result = PackMethodOutput::fromCommand($this);
-    }
 }

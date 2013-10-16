@@ -12,21 +12,31 @@ class ImportImageOutput implements ResponseClassInterface
      */
     protected $imageBasketItem;
 
+    protected $warnings;
 
-    public function __construct(ImageBasketItem $imageBasketItem)
+    public function __construct(ImageBasketItem $imageBasketItem, $warnings = array())
     {
         $this->imageBasketItem = $imageBasketItem;
+        $this->warnings        = $warnings;
     }
 
     public static function fromCommand(OperationCommand $command)
     {
         $response = $command->getResponse()->json();
-        echo 'DEBUG ON LINE ',__LINE__, ' in ', __FILE__, "\n<pre>\n";
-        print_r($response);
-        echo "\n</pre>\n";
-        exit;
-        return new self($pack);
+        $item     = $command['serializer']->denormalizeImageBasketItem($response['imageBasketItem']);
+        return new self($item, $response['warnings']);
 
     }
+
+    public function getImageBasketItem()
+    {
+        return $this->imageBasketItem;
+    }
+
+    public function getWarnings()
+    {
+        return $this->warnings;
+    }
+
 
 }
