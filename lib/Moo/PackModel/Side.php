@@ -16,6 +16,9 @@ class Side
 
     const TYPE_IMAGE   = 'image';
     const TYPE_DETAILS = 'details';
+    const TYPE_MIDDLE  = 'middle';
+    const TYPE_BACK    = 'back';
+
 
 
     public function __construct($type, $sideNum, $templateCode)

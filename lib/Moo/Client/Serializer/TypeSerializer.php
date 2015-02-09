@@ -6,6 +6,7 @@ use Moo\PackModel\Type\Box;
 use Moo\PackModel\Type\Colour;
 use Moo\PackModel\Type\CMYK;
 use Moo\PackModel\Type\RGB;
+use Moo\PackModel\Type\Point;
 
 class TypeSerializer
 {
@@ -49,8 +50,7 @@ class TypeSerializer
     public function normalizeBox(Box $box)
     {
         return array(
-             'x'      => $box->getX(),
-             'y'      => $box->getY(),
+             'center' => $this->normalizePoint($box->getCentre()), // because MOO can't spell
              'width'  => $box->getWidth(),
              'height' => $box->getHeight(),
              'angle'  => $box->getAngle(),
@@ -59,7 +59,26 @@ class TypeSerializer
 
     public function denormalizeBox($data)
     {
-        return new Box($data['x'], $data['y'], $data['width'], $data['height'], $data['angle']);
+        $centre = $this->denormalizePoint($data['center']);
+        return new Box(
+            $centre,
+            $data['width'],
+            $data['height'],
+            $data['angle']
+        );
+    }
+
+    public function normalizePoint(Point $point)
+    {
+        return array(
+            'x' => $point->getX(),
+            'y' => $point->getY(),
+        );
+    }
+
+    public function denormalizePoint($data)
+    {
+        return new Point($data['x'], $data['y']);
     }
 
 }

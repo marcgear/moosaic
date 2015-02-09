@@ -13,34 +13,12 @@ $loader->register();
 function createTinEyeClient()
 {
     $options = array(
-        'base_url' => 'http://labs.tineye.com/rest/',
+        'base_url' => 'http://labs.tineye.com/multicolr/rest',
         'mode' => 'rest',
         'request.options' => array(
             'query' => array(
-                'method'  => 'flickr_color_search',
                 'weights' => array(1),
                 'offset'  => 0,
-            ),
-        ),
-    );
-    return new Client($options['base_url'], $options);
-}
-
-function createFlickrClient()
-{
-
-    $key     = 'a94022e5f47bee8145b2327b878d8cbb';
-    $secret  = '664bbd992484aca5';
-    $options = array(
-        'base_url' => 'http://api.flickr.com/services/rest/',
-        'mode'     => 'rest',
-        'request.options' => array (
-            'query' => array(
-                'method'  => 'flickr.photos.getInfo',
-                'format'  => 'json',
-                'api_key' => $key,
-                'secret'  => $secret,
-                'nojsoncallback' => 1,
             ),
         ),
     );

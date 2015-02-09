@@ -19,7 +19,6 @@ class UpdatePack extends PackCommand
         }
 
         $packStr = $this['serializer']->serializePack($this['pack']);
-        
         $this->request->addPostFields(array('pack' => $packStr));
     }
 }

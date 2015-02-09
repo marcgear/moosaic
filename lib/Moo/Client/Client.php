@@ -8,6 +8,11 @@ use Guzzle\Service\Description\ServiceDescription;
 
 class Client extends GuzzleClient
 {
+    /**
+     * @static
+     * @param array $config
+     * @return Moo\Client\Client
+     */
     public static function factory($config = array())
     {
         $default = array(

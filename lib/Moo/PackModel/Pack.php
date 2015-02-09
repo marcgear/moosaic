@@ -74,8 +74,8 @@ class Pack
     public function getExtras()
     {
         $extras = array();
-        foreach ($this->extras as $extras) {
-            $extra[] = $extras;
+        foreach ($this->extras as $extra) {
+            $extras[] = $extra;
         }
         return $extras;
     }

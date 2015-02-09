@@ -3,29 +3,22 @@ namespace Moo\PackModel\Type;
 
 class Box
 {
-    protected $x;
-    protected $y;
+    protected $centre;
     protected $width;
     protected $height;
     protected $angle;
 
-    public function __construct($x, $y, $width, $height, $angle)
+    public function __construct(Point $centre, $width, $height, $angle)
     {
-        $this->x      = $x;
-        $this->y      = $y;
+        $this->centre = $centre;
         $this->width  = $width;
         $this->height = $height;
         $this->angle  = $angle;
     }
 
-    public function getX()
+    public function getCentre()
     {
-        return $this->x;
-    }
-
-    public function getY()
-    {
-        return $this->y;
+        return $this->centre;
     }
 
     public function getWidth()

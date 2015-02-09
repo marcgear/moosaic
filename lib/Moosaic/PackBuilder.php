@@ -11,6 +11,7 @@ use Moo\PackModel\Data\Text;
 use Moo\PackModel\Type\CMYK;
 use Moo\PackModel\Type\Colour;
 use Moo\PackModel\Type\Font;
+use Moo\PackModel\Type\Point;
 use Moo\PackModel\Type\Box as BoundingBox;
 
 class PackBuilder
@@ -46,7 +47,6 @@ class PackBuilder
     public function addCard(Colour $colour, ImageBasketItem $imageBasketItem = null, $x, $y)
     {
         if (!$this->currentPack || count($this->currentPack->getCards()) == $this->currentPack->getNumCards()) {
-            return;
             $this->createNewPack();
         }
         $cardNum     = count($this->currentPack->getCards()) + 1;
@@ -66,14 +66,14 @@ class PackBuilder
     protected function createImageSide(Colour $colour, ImageBasketItem $imageBasketItem = null)
     {
         $sideNum = count($this->currentPack->getSides()) + 1;
-        $side    = new Side(Side::TYPE_IMAGE, $sideNum, 'businesscard_full_image_landscape');
+        $side    = new Side(Side::TYPE_IMAGE, $sideNum, 'businesscard_square_full_image');
         $bgBox   = new Box('background_box', $colour);
         $side->addData($bgBox);
 
         // add the image to the imagebasket
         if ($imageBasketItem) {
             $this->currentPack->getImageBasket()->addItem($imageBasketItem);
-            $box = new BoundingBox(44, 29.5, 88, 59, 0);
+            $box = new BoundingBox(new Point(44, 29.5), 88, 59, 0);
             $image = new Image(
                 'variable_image_front',
                 $box,
@@ -99,11 +99,11 @@ class PackBuilder
         $line3   = 'y = '.$y;
 
         $sideNum = count($this->currentPack->getSides()) + 1;
-        $side    = new Side(Side::TYPE_DETAILS, $sideNum, 'businesscard_full_text_landscape');
+        $side    = new Side(Side::TYPE_DETAILS, $sideNum, 'businesscard_square_details_text_only_large');
         $font    = new Font('bryant', false, false);
         $colour  = new CMYK(0, 0, 0, 100);
-        $side->addData(new Text('back_line_2', $line2, $font, $colour, 4, Text::ALIGN_LEFT));
-        $side->addData(new Text('back_line_3', $line3, $font, $colour, 4, Text::ALIGN_LEFT));
+        $side->addData(new Text('fullname', $line2, $font, $colour, 4, Text::ALIGN_LEFT));
+        $side->addData(new Text('companyname', $line3, $font, $colour, 4, Text::ALIGN_LEFT));
 
         return $side;
     }

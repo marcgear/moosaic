@@ -30,7 +30,7 @@ class Image extends Data
     public function __construct($linkId, BoundingBox $box, $resourceUri, $imageStoreFileId, $enhance)
     {
         parent::__construct($linkId);
-        $this->box              = $box;
+        $this->imageBox         = $box;
         $this->resourceUri      = $resourceUri;
         $this->imageStoreFileId = $imageStoreFileId;
         $this->enhance          = $enhance;

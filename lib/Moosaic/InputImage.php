@@ -9,9 +9,42 @@ class InputImage
     protected $colours = array();
     protected $pixels  = array();
 
-    public function __construct($filename)
+    public function __construct($filename, $type)
     {
         $this->filename = $filename;
+
+        switch ($type) {
+            case 'bc-l':
+                $this->cardDim['width']  = 88;
+                $this->cardDim['height'] = 59;
+                $this->thumbDim['width'] = 22;
+                $this->thumbDim['height'] = 15;
+                break;
+            case 'bc-p':
+                $this->cardDim['width']   = 59;
+                $this->cardDim['height']  = 88;
+                $this->thumbDim['width']  = 13;
+                $this->thumbDim['height'] = 22;
+                break;
+            case 'mc-l':
+                 $this->cardDim['width']   = 70;
+                 $this->cardDim['height']  = 28;
+                 $this->thumbDim['width']  = 18;
+                 $this->thumbDim['height'] = 7;
+                 break;
+            case 'mc-p':
+                $this->cardDim['width']   = 28;
+                $this->cardDim['height']  = 70;
+                $this->thumbDim['width']  = 7;
+                $this->thumbDim['height'] = 22;
+                break;
+            case 'sq';
+                $this->cardDim['width']  = 65;
+                $this->cardDim['height'] = 65;
+                $this->thumbDim['width']  = 15;
+                $this->thumbDim['height'] = 16;
+                break;
+        }
     }
 
     public function getPixels()
@@ -24,20 +57,27 @@ class InputImage
         return $this->colours;
     }
 
-    public function makeThumb($output, $maxDim = 35)
+    public function makeThumb($output, $maxDim = 2000)
     {
         if (file_exists($output)) {
             throw new Exception('Will not overwrite file');
         }
         list($width, $height) = getimagesize($this->filename);
         $ratio = $width/$height;
+
+        if ($width > $height) {
+            $maxCards = floor($maxDim / $this->cardDim['width']);
+        } else {
+            $maxCards = floor($maxDim / $this->cardDim['height']);
+        }
+
         $imagick = new Imagick($this->filename);
         if ($width > $height) {
-            $height = floor(($maxDim/$ratio)*(88/59));
-            $imagick->thumbnailimage($maxDim, $height);
+            $height = floor(($maxCards/$ratio)*($this->cardDim['width']/$this->cardDim['height']));
+            $imagick->thumbnailimage($maxCards, $height);
         } else {
-            $width = floor(($maxDim * $ratio)/(88/59));
-            $imagick->thumbnailimage($width, $maxDim);
+            $width = floor(($maxCards * $ratio)/($this->cardDim['width']/$this->cardDim['height']));
+            $imagick->thumbnailimage($width, $maxCards);
         }
         $imagick->writeimages($output, false);
         $this->thumb = $output;
@@ -76,13 +116,13 @@ class InputImage
 
     public function draw()
     {?>
-        <table border=0>
+        <table border=0 cellpadding="1" cellspacing="1">
         <?php
         foreach ($this->getPixels() as $pixels) {
             ?>
             <tr>
                 <?php foreach ($pixels as $pixel) {?>
-                    <td width="22" height="16" style="background-color:<?php echo $pixel;?>;"><img src="<?php if (isset($images[$pixel][0])) { echo $images[$pixel][0]; }?>"</td>
+                    <td width="<?php echo $this->thumbDim['width'];?>" height="<?php echo $this->thumbDim['height'];?>" style="background-color:<?php echo $pixel;?>;"><img src="<?php if (isset($images[$pixel][0])) { echo $images[$pixel][0]; }?>"</td>
                 <?php } ?>
             </tr>
         <?php } ?>

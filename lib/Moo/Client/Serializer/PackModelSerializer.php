@@ -182,7 +182,7 @@ class PackModelSerializer
     {
         $imageItems = array();
         foreach ($item->getImageItems() as $imageItem){
-            $imageItems[] = $this->normalizeImageBasketItem($imageItem);
+            $imageItems[] = $this->normalizeImageBasketItemImage($imageItem);
         }
 
         return array(
